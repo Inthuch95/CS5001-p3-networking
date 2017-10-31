@@ -38,7 +38,6 @@ public class ConnectionHandler extends Thread {
 		while(true) {
 			String line = br.readLine(); // get data from client over socket
 			System.out.println("ConnectionHandler: " + line); // assuming no exception, print out line received from client
-			String header = "";
 			String filename = line.split(" ")[1];
 			//GET
 			if (line.split(" ")[0].contains("GET")) {
@@ -80,7 +79,6 @@ public class ConnectionHandler extends Thread {
 	
 	private byte[] getContent(String path) {
 		String content = "";
-		System.out.println(path);
 		if (path.contains(".html")) {
 			try {
 		        BufferedReader in = new BufferedReader(new FileReader(path));
