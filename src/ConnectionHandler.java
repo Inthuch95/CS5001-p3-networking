@@ -1,7 +1,7 @@
-
-
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import javax.imageio.ImageIO;
 
 public class ConnectionHandler extends Thread {
 
@@ -79,18 +79,26 @@ public class ConnectionHandler extends Thread {
 	
 	private byte[] getContent(String path) {
 		String content = "";
-		if (path.contains(".html")) {
-			try {
-		        BufferedReader in = new BufferedReader(new FileReader(path));
+		try {
+	        if (path.contains(".html")) {
+	        	BufferedReader in = new BufferedReader(new FileReader(path));
 		        String str;
 		        while ((str = in.readLine()) != null) {
 		            content +=str;
 		        }
 		        in.close();
-		    } catch (IOException e) {
-		    	e.printStackTrace();
-		    }
-		}
+	        } else if (path.contains(".jpg")) {
+	        	File f = new File(path);
+	        	BufferedImage o = ImageIO.read(f);
+	        	ByteArrayOutputStream b = new ByteArrayOutputStream();
+	        	ImageIO.write(o, "jpg", b);
+	        	byte[] img = b.toByteArray();
+	        	return img;
+	        }
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
+		
 		return content.getBytes();
 	}
 	
