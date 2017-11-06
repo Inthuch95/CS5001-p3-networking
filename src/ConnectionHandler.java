@@ -46,17 +46,24 @@ public class ConnectionHandler extends Thread {
 			} else if (line.split(" ")[0].contains("HEAD")) {
 				byte[] response = getHeader(directory, filename);
 				os.write(response);
+			} else {
+				byte[] response = getNotImplementedResponse();
+				os.write(response);
 			}
 			conn.close();
 		}
 	}
 	
-	private byte[] getResponseText(String directory, String filename) {
+	private byte[] getResponseText(String directory, String filename) 
+			throws UnsupportedEncodingException, IOException {
 		ByteArrayOutputStream outStream = null;
+		String path = directory + filename;
 		String response = "";
 		byte[] content = null;
 		try {
-			String path = directory + filename;
+			// test file not found
+			BufferedReader in = new BufferedReader(new FileReader(path));
+			in.close();
 			content = getContent(path);
 			response += "HTTP/1.1 200 OK\r\n";
 			response += "Server: Simple Java Http\r\n";
@@ -72,7 +79,15 @@ public class ConnectionHandler extends Thread {
 			outStream.write(content);
 			
 		} catch (Exception e) {
-			
+			content = getContent(path);
+			response += "HTTP/1.1 404 Not Found\r\n";
+			response += "Server: Simple Java Http\r\n";
+			response += "Content-Type: text/html\r\n";
+			response += "Content-Length: " + content.length + "\r\n\r\n";
+			System.out.println(response);
+			outStream = new ByteArrayOutputStream();
+			outStream.write(response.getBytes("UTF-8"));
+			outStream.write(content);
 		}
 		return outStream.toByteArray();
 	}
@@ -96,18 +111,22 @@ public class ConnectionHandler extends Thread {
 	        	return img;
 	        }
 	    } catch (IOException e) {
-	    	e.printStackTrace();
+	    	content += "<h1>404 Not Found</h1>";
 	    }
 		
 		return content.getBytes();
 	}
 	
-	private byte[] getHeader(String directory, String filename) {
+	private byte[] getHeader(String directory, String filename) 
+			throws UnsupportedEncodingException, IOException {
 		ByteArrayOutputStream outStream = null;
+		String path = directory + filename;
 		String response = "";
 		byte[] content = null;
 		try {
-			String path = directory + filename;
+			// test file not found
+			BufferedReader in = new BufferedReader(new FileReader(path));
+			in.close();
 			content = getContent(path);
 			response += "HTTP/1.1 200 OK\r\n";
 			response += "Server: Simple Java Http\r\n";
@@ -122,9 +141,33 @@ public class ConnectionHandler extends Thread {
 			outStream.write(response.getBytes("UTF-8"));
 			outStream.write(content);
 			
-		} catch (Exception e) {
-			
+		} catch (IOException e) {
+			content = getContent(path);
+			response += "HTTP/1.1 404 Not Found\r\n";
+			response += "Server: Simple Java Http\r\n";
+			response += "Content-Type: text/html\r\n";
+			response += "Content-Length: " + content.length + "\r\n\r\n";
+			System.out.println(response);
+			outStream = new ByteArrayOutputStream();
+			outStream.write(response.getBytes("UTF-8"));
+			outStream.write(content);
 		}
+		return outStream.toByteArray();
+	}
+	
+	private byte[] getNotImplementedResponse () throws UnsupportedEncodingException, IOException {
+		ByteArrayOutputStream outStream = null;
+		String content = "";
+		String response = "";
+		content += "<h1>501 Not Implemented</h1>";
+		response += "HTTP/1.1 501 Not Implemented\r\n";
+		response += "Server: Simple Java Http\r\n";
+		response += "Content-Type: text/html\r\n";
+		response += "Content-Length: " + content.length() + "\r\n\r\n";
+		System.out.println(response);
+		outStream = new ByteArrayOutputStream();
+		outStream.write(response.getBytes("UTF-8"));
+		outStream.write(content.getBytes());
 		return outStream.toByteArray();
 	}
 
