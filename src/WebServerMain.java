@@ -8,7 +8,8 @@ public class WebServerMain {
 		new Server(directory, port);
 	}
 	
-	private static void checkArgs (String[] args) {
+	private static void checkArgs(String[] args) {
+		// check for no arguments
 		if (args.length == 0) {
 			System.out.println("Usage: java WebServerMain <document_root> <port>");
 			System.exit(0);
