@@ -34,7 +34,7 @@ public class ConnectionHandler extends Thread {
 		// Server class) is invoked
 		System.out.println("new ConnectionHandler thread started .... ");
 		try {
-			printRequest();
+			handleRequest();
 		} catch (Exception e) {
 			// exit cleanly for any Exception (including IOException,
 			// ClientDisconnectedException)
@@ -44,7 +44,7 @@ public class ConnectionHandler extends Thread {
 		}
 	}
 
-	private void printRequest() throws IOException {
+	private void handleRequest() throws IOException {
 		while (true) {
 			// get data from client over socket
 			String line = br.readLine();
@@ -176,7 +176,6 @@ public class ConnectionHandler extends Thread {
 		response += "Server: Simple Java Http\r\n";
 		response += "Content-Type: text/html\r\n";
 		response += "Content-Length: " + content.length() + "\r\n\r\n";
-		System.out.println(response);
 		outStream = new ByteArrayOutputStream();
 		outStream.write(response.getBytes("UTF-8"));
 		outStream.write(content.getBytes());
