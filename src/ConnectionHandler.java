@@ -13,10 +13,13 @@ public class ConnectionHandler extends Thread {
 	private OutputStream os;
 	BufferedReader br;
 	private String directory;
+	private SynchronizedCounter synCounter;
+	private final int MAX_CONNECTION = 50;
 
-	public ConnectionHandler(Socket conn, String directory) {
+	public ConnectionHandler(Socket conn, String directory, SynchronizedCounter synCounter) {
 		this.directory = directory;
 		this.conn = conn;
+		this.synCounter = synCounter;
 		try {
 			// get data from client on this input stream
 			is = conn.getInputStream();
@@ -39,17 +42,16 @@ public class ConnectionHandler extends Thread {
 			// exit cleanly for any Exception (including IOException,
 			// ClientDisconnectedException)
 			System.out.println("ConnectionHandler:run " + e.getMessage());
-			// cleanup and exit
-			cleanup();
 		}
 	}
 
 	private void handleRequest() throws IOException {
-		while (true) {
+		int connCounter = synCounter.getCounter();
+		while (connCounter <= MAX_CONNECTION) {
 			// get data from client over socket
 			String line = br.readLine();
 			// assuming no exception, print out line received from client
-			System.out.println("ConnectionHandler: " + line);
+			System.out.println("\nConnectionHandler: " + line);
 			String filename = line.split(" ")[1];
 			if (line.split(" ")[0].contains("GET")) {
 				// GET
@@ -64,7 +66,7 @@ public class ConnectionHandler extends Thread {
 				byte[] response = getNotImplementedResponse();
 				os.write(response);
 			}
-			conn.close();
+			cleanup();
 		}
 	}
 
@@ -112,7 +114,7 @@ public class ConnectionHandler extends Thread {
 				BufferedReader in = new BufferedReader(new FileReader(path));
 				String str;
 				while ((str = in.readLine()) != null) {
-					content += str;
+					content += str+ "\r\n";
 				}
 				in.close();
 			} else if (path.contains(".jpg")) {
@@ -151,7 +153,6 @@ public class ConnectionHandler extends Thread {
 			System.out.println(response);
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
-			outStream.write(content);
 
 		} catch (IOException e) {
 			content = getContent(path);
@@ -188,6 +189,7 @@ public class ConnectionHandler extends Thread {
 			br.close();
 			is.close();
 			conn.close();
+			synCounter.decrement();
 		} catch (IOException ioe) {
 			System.out.println("ConnectionHandler:cleanup " + ioe.getMessage());
 		}
