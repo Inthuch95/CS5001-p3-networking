@@ -1,6 +1,7 @@
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 import javax.imageio.ImageIO;
 
 public class ConnectionHandler extends Thread {
@@ -14,7 +15,8 @@ public class ConnectionHandler extends Thread {
 	BufferedReader br;
 	private String directory;
 	private SynchronizedCounter synCounter;
-	private final int MAX_CONNECTION = 50;
+	private Date date = new Date();
+	BufferedWriter logWriter;
 
 	public ConnectionHandler(Socket conn, String directory, SynchronizedCounter synCounter) {
 		this.directory = directory;
@@ -27,6 +29,7 @@ public class ConnectionHandler extends Thread {
 			os = conn.getOutputStream();
 			// use buffered reader to read client data
 			br = new BufferedReader(new InputStreamReader(is));
+			logWriter = new BufferedWriter(new FileWriter("../log.txt"));
 		} catch (IOException ioe) {
 			System.out.println("ConnectionHandler: " + ioe.getMessage());
 		}
@@ -36,6 +39,7 @@ public class ConnectionHandler extends Thread {
 		// run method is invoked when the Thread's start method (ch.start(); in
 		// Server class) is invoked
 		System.out.println("new ConnectionHandler thread started .... ");
+		System.out.println(date);
 		try {
 			handleRequest();
 		} catch (Exception e) {
@@ -46,13 +50,13 @@ public class ConnectionHandler extends Thread {
 	}
 
 	private void handleRequest() throws IOException {
-		int connCounter = synCounter.getCounter();
-		while (connCounter <= MAX_CONNECTION) {
+		while (true) {
 			// get data from client over socket
 			String line = br.readLine();
 			// assuming no exception, print out line received from client
 			System.out.println("\nConnectionHandler: " + line);
 			String filename = line.split(" ")[1];
+			logWriter.write(line);
 			if (line.split(" ")[0].contains("GET")) {
 				// GET
 				byte[] response = getResponseText(directory, filename);
@@ -82,13 +86,16 @@ public class ConnectionHandler extends Thread {
 			content = getContent(path);
 			response += "HTTP/1.1 200 OK\r\n";
 			response += "Server: Simple Java Http\r\n";
-			if (filename.contains(".jpg")) {
+			if (filename.contains(".jpg") || 
+					filename.contains(".gif") || 
+					filename.contains(".png")) {
 				response += "Content-Type: image/jpeg\r\n";
 			} else {
 				response += "Content-Type: text/html\r\n";
 			}
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
+			logWriter.write(response);
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 			outStream.write(content);
@@ -100,6 +107,7 @@ public class ConnectionHandler extends Thread {
 			response += "Content-Type: text/html\r\n";
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
+			logWriter.write(response);
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 			outStream.write(content);
@@ -117,7 +125,9 @@ public class ConnectionHandler extends Thread {
 					content += str+ "\r\n";
 				}
 				in.close();
-			} else if (path.contains(".jpg")) {
+			} else if (path.contains(".jpg") || 
+						path.contains(".gif") || 
+						path.contains(".png")) {
 				File f = new File(path);
 				BufferedImage o = ImageIO.read(f);
 				ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -144,13 +154,16 @@ public class ConnectionHandler extends Thread {
 			content = getContent(path);
 			response += "HTTP/1.1 200 OK\r\n";
 			response += "Server: Simple Java Http\r\n";
-			if (filename.contains(".jpg")) {
+			if (filename.contains(".jpg") || 
+					filename.contains(".gif") || 
+					filename.contains(".png")) {
 				response += "Content-Type: image/jpeg\r\n";
 			} else {
 				response += "Content-Type: text/html\r\n";
 			}
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
+			logWriter.write(response);
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 
@@ -161,6 +174,7 @@ public class ConnectionHandler extends Thread {
 			response += "Content-Type: text/html\r\n";
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
+			logWriter.write(response);
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 			outStream.write(content);
@@ -190,6 +204,7 @@ public class ConnectionHandler extends Thread {
 			is.close();
 			conn.close();
 			synCounter.decrement();
+			logWriter.close();
 		} catch (IOException ioe) {
 			System.out.println("ConnectionHandler:cleanup " + ioe.getMessage());
 		}
