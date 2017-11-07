@@ -29,7 +29,7 @@ public class ConnectionHandler extends Thread {
 			os = conn.getOutputStream();
 			// use buffered reader to read client data
 			br = new BufferedReader(new InputStreamReader(is));
-			logWriter = new BufferedWriter(new FileWriter("../log.txt"));
+			logWriter = new BufferedWriter(new FileWriter(this.directory + "/log.txt", true));
 		} catch (IOException ioe) {
 			System.out.println("ConnectionHandler: " + ioe.getMessage());
 		}
@@ -39,7 +39,6 @@ public class ConnectionHandler extends Thread {
 		// run method is invoked when the Thread's start method (ch.start(); in
 		// Server class) is invoked
 		System.out.println("new ConnectionHandler thread started .... ");
-		System.out.println(date);
 		try {
 			handleRequest();
 		} catch (Exception e) {
@@ -56,7 +55,8 @@ public class ConnectionHandler extends Thread {
 			// assuming no exception, print out line received from client
 			System.out.println("\nConnectionHandler: " + line);
 			String filename = line.split(" ")[1];
-			logWriter.write(line);
+			logWriter.append(date + " " + line);
+			logWriter.newLine();
 			if (line.split(" ")[0].contains("GET")) {
 				// GET
 				byte[] response = getResponseText(directory, filename);
@@ -95,7 +95,8 @@ public class ConnectionHandler extends Thread {
 			}
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
-			logWriter.write(response);
+			logWriter.append(date + " " + response);
+			logWriter.newLine();
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 			outStream.write(content);
@@ -107,7 +108,8 @@ public class ConnectionHandler extends Thread {
 			response += "Content-Type: text/html\r\n";
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
-			logWriter.write(response);
+			logWriter.append(date + " " + response);
+			logWriter.newLine();
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 			outStream.write(content);
@@ -163,7 +165,8 @@ public class ConnectionHandler extends Thread {
 			}
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
-			logWriter.write(response);
+			logWriter.append(date + " " + response);
+			logWriter.newLine();
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 
@@ -174,7 +177,8 @@ public class ConnectionHandler extends Thread {
 			response += "Content-Type: text/html\r\n";
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
-			logWriter.write(response);
+			logWriter.append(date + " " + response);
+			logWriter.newLine();
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
 			outStream.write(content);
@@ -191,6 +195,8 @@ public class ConnectionHandler extends Thread {
 		response += "Server: Simple Java Http\r\n";
 		response += "Content-Type: text/html\r\n";
 		response += "Content-Length: " + content.length() + "\r\n\r\n";
+		logWriter.append(date + " " + response);
+		logWriter.newLine();
 		outStream = new ByteArrayOutputStream();
 		outStream.write(response.getBytes("UTF-8"));
 		outStream.write(content.getBytes());
