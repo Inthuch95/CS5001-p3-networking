@@ -1,0 +1,21 @@
+Wed Nov 08 18:13:59 GMT 2017 GET /page2.html HTTP/1.1
+Wed Nov 08 18:13:59 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: text/html
+Content-Length: 805
+
+
+Wed Nov 08 18:13:59 GMT 2017 GET /beer.jpg HTTP/1.1
+Wed Nov 08 18:13:59 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: image/jpeg
+Content-Length: 16129
+
+
+Wed Nov 08 18:13:59 GMT 2017 GET /tp_it.jpg HTTP/1.1
+Wed Nov 08 18:13:59 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: image/jpeg
+Content-Length: 30582
+
+

@@ -40,7 +40,7 @@ public class ConnectionHandler extends Thread {
 			// use buffered reader to read client data
 			br = new BufferedReader(new InputStreamReader(is));
 			// open log file in www directory
-			logWriter = new BufferedWriter(new FileWriter(this.directory + "/log.txt", true));
+			logWriter = new BufferedWriter(new FileWriter("../log.txt", true));
 		} catch (IOException ioe) {
 			System.out.println("ConnectionHandler: " + ioe.getMessage());
 		}

@@ -117,3 +117,73 @@ Content-Type: text/html
 Content-Length: 1279
 
 
+Wed Nov 08 18:12:34 GMT 2017 GET /index.html HTTP/1.1
+Wed Nov 08 18:12:34 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: text/html
+Content-Length: 1279
+
+
+Wed Nov 08 18:12:34 GMT 2017 GET /favicon.ico HTTP/1.1
+Wed Nov 08 18:12:34 GMT 2017 HTTP/1.1 404 Not Found
+Server: Simple Java Http
+Content-Type: text/html
+Content-Length: 0
+
+
+Wed Nov 08 18:12:36 GMT 2017 GET /page2.html HTTP/1.1
+Wed Nov 08 18:12:36 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: text/html
+Content-Length: 805
+
+
+Wed Nov 08 18:12:36 GMT 2017 GET /beer.jpg HTTP/1.1
+Wed Nov 08 18:12:36 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: image/jpeg
+Content-Length: 16129
+
+
+Wed Nov 08 18:12:36 GMT 2017 GET /tp_it.jpg HTTP/1.1
+Wed Nov 08 18:12:36 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: image/jpeg
+Content-Length: 30582
+
+
+Wed Nov 08 18:12:39 GMT 2017 GET /index.html HTTP/1.1
+Wed Nov 08 18:12:39 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: text/html
+Content-Length: 1279
+
+
+Wed Nov 08 18:12:45 GMT 2017 GET /page3.html HTTP/1.1
+Wed Nov 08 18:12:45 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: text/html
+Content-Length: 1144
+
+
+Wed Nov 08 18:12:45 GMT 2017 GET /page2.html HTTP/1.1
+Wed Nov 08 18:12:45 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: text/html
+Content-Length: 805
+
+
+Wed Nov 08 18:12:45 GMT 2017 GET /tp_it.jpg HTTP/1.1
+Wed Nov 08 18:12:45 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: image/jpeg
+Content-Length: 30582
+
+
+Wed Nov 08 18:12:45 GMT 2017 GET /beer.jpg HTTP/1.1
+Wed Nov 08 18:12:45 GMT 2017 HTTP/1.1 200 OK
+Server: Simple Java Http
+Content-Type: image/jpeg
+Content-Length: 16129
+
+
