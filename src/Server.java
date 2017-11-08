@@ -1,16 +1,27 @@
 import java.io.IOException;
 import java.net.*;
 
+/**
+ * Create server and listen for client connection requests
+ *
+ */
 public class Server {
 	// listen for client connection requests on this server socket
 	private ServerSocket ss;
 	private SynchronizedCounter synCounter = new SynchronizedCounter();
+	// maximum number of concurrent client connections 
 	private final int MAX_CONNECTION = 50;
 
+	/**
+	 * @param directory - directory where webpages are located
+	 * @param port - port number
+	 * Start a server that listen for client connection requests 
+	 */
 	public Server(String directory, int port) {
 		try {
 			ss = new ServerSocket(port);
 			System.out.println("Server started ... listening on port " + port + " ...");
+			// get number of connections
 			int connCounter = synCounter.getCounter();
 			while (connCounter < MAX_CONNECTION) {
 				Socket conn = ss.accept();

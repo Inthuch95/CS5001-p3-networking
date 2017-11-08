@@ -4,6 +4,10 @@ import java.net.Socket;
 import java.util.Date;
 import javax.imageio.ImageIO;
 
+/**
+ * Handles client/server interactions
+ *
+ */
 public class ConnectionHandler extends Thread {
 	// conn - socket representing TCP/IP connection to Client
 	// is - get data from client on this input stream
@@ -18,6 +22,12 @@ public class ConnectionHandler extends Thread {
 	private Date date = new Date();
 	BufferedWriter logWriter;
 
+	/**
+	 * Initializes networking parameters. Start a new thread when new connection is established
+	 * @param conn - socket representing TCP/IP connection to Client
+	 * @param directory - directory where webpages are located
+	 * @param synCounter - count the number of client connections
+	 */
 	public ConnectionHandler(Socket conn, String directory, SynchronizedCounter synCounter) {
 		this.directory = directory;
 		this.conn = conn;
@@ -29,6 +39,7 @@ public class ConnectionHandler extends Thread {
 			os = conn.getOutputStream();
 			// use buffered reader to read client data
 			br = new BufferedReader(new InputStreamReader(is));
+			// open log file in www directory
 			logWriter = new BufferedWriter(new FileWriter(this.directory + "/log.txt", true));
 		} catch (IOException ioe) {
 			System.out.println("ConnectionHandler: " + ioe.getMessage());
@@ -55,6 +66,7 @@ public class ConnectionHandler extends Thread {
 			// assuming no exception, print out line received from client
 			System.out.println("\nConnectionHandler: " + line);
 			String filename = line.split(" ")[1];
+			// log request
 			logWriter.append(date + " " + line);
 			logWriter.newLine();
 			if (line.split(" ")[0].contains("GET")) {
@@ -70,11 +82,13 @@ public class ConnectionHandler extends Thread {
 				byte[] response = getNotImplementedResponse();
 				os.write(response);
 			}
+			// clean up socket
 			cleanup();
 		}
 	}
 
-	private byte[] getResponseText(String directory, String filename) throws UnsupportedEncodingException, IOException {
+	private byte[] getResponseText(String directory, String filename) 
+			throws UnsupportedEncodingException, IOException {
 		ByteArrayOutputStream outStream = null;
 		String path = directory + filename;
 		String response = "";
@@ -83,9 +97,12 @@ public class ConnectionHandler extends Thread {
 			// test file not found
 			BufferedReader in = new BufferedReader(new FileReader(path));
 			in.close();
+			// get content of requested file
 			content = getContent(path);
+			// give ok response
 			response += "HTTP/1.1 200 OK\r\n";
 			response += "Server: Simple Java Http\r\n";
+			// check file extension
 			if (filename.contains(".jpg") || 
 					filename.contains(".gif") || 
 					filename.contains(".png")) {
@@ -95,6 +112,7 @@ public class ConnectionHandler extends Thread {
 			}
 			response += "Content-Length: " + content.length + "\r\n\r\n";
 			System.out.println(response);
+			// log response
 			logWriter.append(date + " " + response);
 			logWriter.newLine();
 			outStream = new ByteArrayOutputStream();
@@ -102,6 +120,7 @@ public class ConnectionHandler extends Thread {
 			outStream.write(content);
 
 		} catch (Exception e) {
+			// file not found
 			content = getContent(path);
 			response += "HTTP/1.1 404 Not Found\r\n";
 			response += "Server: Simple Java Http\r\n";
@@ -121,6 +140,7 @@ public class ConnectionHandler extends Thread {
 		String content = "";
 		try {
 			if (path.contains(".html")) {
+				// get html file 
 				BufferedReader in = new BufferedReader(new FileReader(path));
 				String str;
 				while ((str = in.readLine()) != null) {
@@ -130,6 +150,7 @@ public class ConnectionHandler extends Thread {
 			} else if (path.contains(".jpg") || 
 						path.contains(".gif") || 
 						path.contains(".png")) {
+				// get binary image
 				File f = new File(path);
 				BufferedImage o = ImageIO.read(f);
 				ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -171,7 +192,6 @@ public class ConnectionHandler extends Thread {
 			outStream.write(response.getBytes("UTF-8"));
 
 		} catch (IOException e) {
-			content = getContent(path);
 			response += "HTTP/1.1 404 Not Found\r\n";
 			response += "Server: Simple Java Http\r\n";
 			response += "Content-Type: text/html\r\n";
@@ -181,7 +201,6 @@ public class ConnectionHandler extends Thread {
 			logWriter.newLine();
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
-			outStream.write(content);
 		}
 		return outStream.toByteArray();
 	}

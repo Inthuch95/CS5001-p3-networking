@@ -7,7 +7,7 @@ public class WebServerMain {
 		int port = Integer.parseInt(args[1]);
 		new Server(directory, port);
 	}
-	
+
 	private static void checkArgs(String[] args) {
 		// check for no arguments
 		if (args.length == 0) {
