@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 
 /**
- * Handles client/server interactions
+ * Handles client/server interactions.
  *
  */
 public class ConnectionHandler extends Thread {
@@ -23,7 +23,7 @@ public class ConnectionHandler extends Thread {
 	BufferedWriter logWriter;
 
 	/**
-	 * Initializes networking parameters. Start a new thread when new connection is established
+	 * Initializes networking parameters. Start a new thread when new connection is established.
 	 * @param conn - socket representing TCP/IP connection to Client
 	 * @param directory - directory where webpages are located
 	 * @param synCounter - count the number of client connections
@@ -103,9 +103,9 @@ public class ConnectionHandler extends Thread {
 			response += "HTTP/1.1 200 OK\r\n";
 			response += "Server: Simple Java Http\r\n";
 			// check file extension
-			if (filename.contains(".jpg") || 
-					filename.contains(".gif") || 
-					filename.contains(".png")) {
+			if (filename.contains(".jpg") 
+					|| filename.contains(".gif") 
+					|| filename.contains(".png")) {
 				response += "Content-Type: image/jpeg\r\n";
 			} else {
 				response += "Content-Type: text/html\r\n";
@@ -144,12 +144,12 @@ public class ConnectionHandler extends Thread {
 				BufferedReader in = new BufferedReader(new FileReader(path));
 				String str;
 				while ((str = in.readLine()) != null) {
-					content += str+ "\r\n";
+					content += str + "\r\n";
 				}
 				in.close();
-			} else if (path.contains(".jpg") || 
-						path.contains(".gif") || 
-						path.contains(".png")) {
+			} else if (path.contains(".jpg") 
+					|| path.contains(".gif") 
+					|| path.contains(".png")) {
 				// get binary image
 				File f = new File(path);
 				BufferedImage o = ImageIO.read(f);
@@ -177,9 +177,9 @@ public class ConnectionHandler extends Thread {
 			content = getContent(path);
 			response += "HTTP/1.1 200 OK\r\n";
 			response += "Server: Simple Java Http\r\n";
-			if (filename.contains(".jpg") || 
-					filename.contains(".gif") || 
-					filename.contains(".png")) {
+			if (filename.contains(".jpg") 
+					|| filename.contains(".gif") 
+					|| filename.contains(".png")) {
 				response += "Content-Type: image/jpeg\r\n";
 			} else {
 				response += "Content-Type: text/html\r\n";
@@ -192,6 +192,7 @@ public class ConnectionHandler extends Thread {
 			outStream.write(response.getBytes("UTF-8"));
 
 		} catch (IOException e) {
+			content = getContent(path);
 			response += "HTTP/1.1 404 Not Found\r\n";
 			response += "Server: Simple Java Http\r\n";
 			response += "Content-Type: text/html\r\n";
@@ -201,6 +202,7 @@ public class ConnectionHandler extends Thread {
 			logWriter.newLine();
 			outStream = new ByteArrayOutputStream();
 			outStream.write(response.getBytes("UTF-8"));
+			outStream.write(content);
 		}
 		return outStream.toByteArray();
 	}

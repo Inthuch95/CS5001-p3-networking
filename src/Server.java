@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.net.*;
 
 /**
- * Create server and listen for client connection requests
+ * Create server and listen for client connection requests.
  *
  */
 public class Server {
@@ -13,9 +13,9 @@ public class Server {
 	private final int MAX_CONNECTION = 50;
 
 	/**
+	 * Start a server that listen for client connection requests.
 	 * @param directory - directory where webpages are located
 	 * @param port - port number
-	 * Start a server that listen for client connection requests 
 	 */
 	public Server(String directory, int port) {
 		try {
